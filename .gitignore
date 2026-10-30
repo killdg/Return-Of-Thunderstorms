@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+artifacts/
+*.dll
+*.pdb
+*.zip
+*.log
+*.user
+*.suo
+.vs/
+src/Server/config.json
