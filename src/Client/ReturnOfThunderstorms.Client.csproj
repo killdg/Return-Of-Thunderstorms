@@ -4,7 +4,7 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <AssemblyName>ReturnOfThunderstorms.Client</AssemblyName>
-    <Version>1.2.2</Version>
+    <Version>1.2.3</Version>
     <Authors>killdg</Authors>
   </PropertyGroup>
   <ItemGroup>
@@ -65,5 +65,7 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup><Compile Include="../Shared/*.cs" /></ItemGroup>
+  <ItemGroup>
+    <Compile Include="../Shared/*.cs" />
+  </ItemGroup>
 </Project>

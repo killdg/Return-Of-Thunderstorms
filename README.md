@@ -4,11 +4,11 @@
 
 Bring thunderstorms back into normal SPT weather, with heavy rain recordings, lightning, thunder, optional hurricane effects, and night-time electrical flickering.
 
-This is a standalone weather mod. 
+This is a standalone weather mod.
 
-**Current release:** client **1.2.2**, server **1.2.2**  
-**Target:** SPT **4.1.6**, EFT **0.16.9.40743**  
-**Download:** [Download 1.2.2 and release notes](https://github.com/killdg/Return-Of-Thunderstorms/releases/tag/v1.2.2)
+**Current release:** client **1.2.3**, server **1.2.3**
+**Target:** SPT **4.1.6**, EFT **0.16.9.40743**
+**Download:** [Download 1.2.3 and release notes](https://github.com/killdg/Return-Of-Thunderstorms/releases/tag/v1.2.3)
 
 ## What the mod changes
 
@@ -23,7 +23,7 @@ This is a standalone weather mod.
 | Extra rain on eyes/goggles | Shorter native drop intervals make water build up faster outdoors during hurricane weather, while retaining native eyewear handling and shelter behavior. |
 | Night electrical flicker | Lightning briefly dims and flickers controllable lamps, street/building lights and supported emissive fixtures, then restores their brightness. |
 
-Flying debris and electrical flicker use the **20:00–06:00** night window. Rain, thunder, wind and enhanced eye/goggle drops can still run during daytime storms. Daytime debris is disabled because its appearance was less convincing in testing.
+Flying debris and electrical flicker use the **20:00Ã¢â‚¬â€œ06:00** night window. Rain, thunder, wind and enhanced eye/goggle drops can still run during daytime storms. Daytime debris is disabled because its appearance was less convincing in testing.
 
 ## Installation
 
@@ -32,7 +32,7 @@ Flying debris and electrical flicker use the **20:00–06:00** night window. Rai
 3. Copy **both** `BepInEx` and `SPT_Runtime` directly from the extracted ZIP into your SPT root, beside `EscapeFromTarkov.exe`. Merge the folders. There is no `INSTALL` wrapper folder.
 4. Keep all four WAV files in the included `Audio` folder.
 5. Start SPT.Server, then launch Tarkov normally.
-6. Open **F1 → Return Of Thunderstorms**. If you rebound Configuration Manager, use that key instead.
+6. Open **F1 Ã¢â€ â€™ Return Of Thunderstorms**. If you rebound Configuration Manager, use that key instead.
 
 The ZIP root contains exactly `README.md`, `BepInEx/`, and `SPT_Runtime/`. The package contains this mod's client DLL, server DLL, example server configuration and four audio files. It contains no game binaries, profiles, saved personal settings, or RR/task-pack files. Profiles and inventories are not edited. SPT's included Configuration Manager supplies the F1 menu; no separate audio or effects mod is needed.
 
@@ -41,7 +41,7 @@ The ZIP root contains exactly `README.md`, `BepInEx/`, and `SPT_Runtime/`. The p
 For a light addition to normal Tarkov weather:
 
 - **Enabled:** on.
-- **Thunderstorm chance:** 25–50%, or your preferred value.
+- **Thunderstorm chance:** 25Ã¢â‚¬â€œ50%, or your preferred value.
 - **Rain chance boost:** **0%**.
 - **Hurricane effects:** off if you only want rain, lightning and thunder.
 - **Night lightning flicker** and **Rain muffles other game sounds:** optional.
@@ -64,7 +64,7 @@ The thunderstorm chance is rolled **once per rain period, not once per raid**. A
 | Setting | Default | What it does |
 | --- | --- | --- |
 | Hurricane effects | On | Enables gusts, wind audio, night-only litter and the hurricane layer. Off retains the basic thunderstorm. |
-| Flying debris limit | 48 | Maximum pooled pieces; range 12–96, including at most six larger cardboard pieces. Lower this for slower systems. |
+| Flying debris limit | 48 | Maximum pooled pieces; range 12Ã¢â‚¬â€œ96, including at most six larger cardboard pieces. Lower this for slower systems. |
 | Extra rain on eyes and goggles | On | In hurricane weather, native drop intervals shorten to about 2x normal at full storm strength and up to 2.75x during peak gusts. Only applies outdoors. |
 
 ### Lightning lights
@@ -76,11 +76,11 @@ The thunderstorm chance is rolled **once per rain period, not once per raid**. A
 
 ### Sound balance
 
-All four sliders range from **0–100%** and save automatically. They are independent gain controls and do not need to add up to 100%.
+All four sliders range from **0Ã¢â‚¬â€œ100%** and save automatically. They are independent gain controls and do not need to add up to 100%.
 
 | Setting | Default |
 | --- | --- |
-| Outdoor rain volume (%) | 100 |
+| Outdoor rain volume (%) | 70 |
 | Indoor rain volume (%) | 40 |
 | Outdoor gameplay volume (%) | 25 |
 | Indoor gameplay volume (%) | 60 |
@@ -142,7 +142,7 @@ Current automated validation: **358 policy/audio checks**, **26 client compatibi
 
 Code is distributed under the [MIT license](LICENSE). Project authorship: **killdg**, with assistance from **ChatGPT**.
 
-## 1.2.2 packaging correction
+## 1.2.3 packaging correction
 
 This release changes the download layout for the SPT mod page: extract the ZIP and copy its two folders directly into SPT. There are no gameplay changes from 1.2.1. The older wrapper-based test archive remains in its original GitHub release.
 
@@ -169,3 +169,12 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+## Source transparency and network behavior
+
+Version 1.2.3 reformats all C# source and tests with four-space indentation, Allman braces, separate statements, expanded declarations and readable multiline calls. Comments explain native field names, shader parameters, local audio paths, SPT routing and restoration. No obfuscator, binary packer or source minifier is used. The formatting follows the conventional C# layout shown by [SPT-BigBrain](https://github.com/DrakiaXYZ/SPT-BigBrain), without incorporating its code.
+
+The client sends only `Enabled` and `RainBoost` to `/client/returnofthunderstorms/settings` through SPT's existing request handler, using the SPT server address configured by the player. This allows the F1 weather controls to affect the server's forecast. There are no external service endpoints, analytics, telemetry or audio downloads. The server saves `config.json` beside this mod's DLL; normal BepInEx settings and logs stay in the SPT installation. The mod does not modify operating-system files.
+
+The v1.2.3 tag contains the source used for the release DLLs. Release assets include build information and SHA-256 checksums so reviewers can identify the source commit and verify the submitted files. Build.ps1 builds the server and client against a local SPT installation and produces the three-entry installer ZIP. See CONTRIBUTING.md for the formatting conventions.
+
+New configurations default to **70% outdoor rain volume**. Existing saved slider values are preserved; use the slider or its reset button to select the new default. Other sound settings and weather probabilities are unchanged. Readability improvements do not establish moderator approval; the SPT mod-page review is separate.

@@ -1,1 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup><ItemGroup><ProjectReference Include="../src/Server/ReturnOfThunderstorms.csproj" /><Compile Remove="ClientChecks/**/*.cs" /><Compile Include="../src/Client/WavePcm.cs" /><Compile Include="../src/Client/ThunderSound.cs" /></ItemGroup><ItemGroup><Reference Include="SPTarkov.Common"><HintPath>$(SPTBinaries)/SPTarkov.Common.dll</HintPath></Reference><Reference Include="SPTarkov.DI"><HintPath>$(SPTBinaries)/SPTarkov.DI.dll</HintPath></Reference><Reference Include="SPTarkov.Server.Core"><HintPath>$(SPTBinaries)/SPTarkov.Server.Core.dll</HintPath></Reference><Reference Include="0Harmony"><HintPath>$(SPTBinaries)/0Harmony.dll</HintPath></Reference><Reference Include="SemanticVersioning"><HintPath>$(SPTBinaries)/SemanticVersioning.dll</HintPath></Reference></ItemGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../src/Server/ReturnOfThunderstorms.csproj" />
+    <Compile Remove="ClientChecks/**/*.cs" />
+    <Compile Include="../src/Client/WavePcm.cs" />
+    <Compile Include="../src/Client/ThunderSound.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SPTarkov.Common">
+      <HintPath>$(SPTBinaries)/SPTarkov.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SPTarkov.DI">
+      <HintPath>$(SPTBinaries)/SPTarkov.DI.dll</HintPath>
+    </Reference>
+    <Reference Include="SPTarkov.Server.Core">
+      <HintPath>$(SPTBinaries)/SPTarkov.Server.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(SPTBinaries)/0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="SemanticVersioning">
+      <HintPath>$(SPTBinaries)/SemanticVersioning.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
