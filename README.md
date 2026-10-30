@@ -4,7 +4,7 @@
 
 Bring thunderstorms back into normal SPT weather, with heavy rain recordings, lightning, thunder, optional hurricane effects, and night-time electrical flickering.
 
-This is a standalone weather mod. **Raid Roulette and its task pack are not required.** It does not add quests, change inventories, or accelerate the raid clock.
+This is a standalone weather mod. 
 
 **Current test build:** client **1.2.1**, server **1.2.0-preview.2**  
 **Target:** SPT **4.1.6**, EFT **0.16.9.40743**  
