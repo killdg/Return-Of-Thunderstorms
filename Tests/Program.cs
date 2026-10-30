@@ -264,4 +264,46 @@ Check(
     HurricanePolicy.NightDebris(21) && HurricanePolicy.NightDebris(3) && !HurricanePolicy.NightDebris(6) && !HurricanePolicy.NightDebris(15),
     "Flying debris is night-only while the hurricane wind remains independent"
 );
+// Frequency controls must reduce rain as well as increase it, without mutating
+// native preset weights or changing the ratios of the remaining dry presets.
+var lessRain = RainWeights.Apply(original, new() { Frequency = RainFrequency.LessRain }, false);
+Check(Math.Abs(lessRain[WeatherPreset.RAINY] / lessRain.Values.Sum() - 7d / 54) < 1e-9,
+    "Less rain halves the native rainy forecast probability");
+Check(Math.Abs(lessRain[WeatherPreset.SUNNY] / lessRain[WeatherPreset.CLOUDY] - 13d / 7) < 1e-9,
+    "Less rain preserves the relative dry weather weights");
+var noRain = RainWeights.Apply(original, new() { Frequency = RainFrequency.Never }, false);
+Check(noRain[WeatherPreset.RAINY] == 0 && Math.Abs(noRain.Values.Sum() - 27) < 1e-9,
+    "Never removes rain and retains the forecast weight budget");
+Check(ReferenceEquals(original, RainWeights.Apply(original,
+    new() { Frequency = RainFrequency.TarkovDefault, RainBoost = 100 }, false)),
+    "Tarkov default ignores a retained legacy rain boost");
+var alwaysRain = RainWeights.Apply(original, new() { Frequency = RainFrequency.AlwaysRain }, false);
+Check(alwaysRain[WeatherPreset.SUNNY] == 0 && alwaysRain[WeatherPreset.CLOUDY] == 0
+    && alwaysRain[WeatherPreset.RAINY] == 27, "Always rain assigns the full forecast budget to rain");
+Check(ReferenceEquals(original, RainWeights.Apply(original,
+    new() { Frequency = RainFrequency.Never }, true)), "Frequency controls preserve native winter weather");
+var allRainNative = new Dictionary<WeatherPreset, double> { { WeatherPreset.RAINY, 10 } };
+var dryFallback = RainWeights.Apply(allRainNative, new() { Frequency = RainFrequency.Never }, false);
+Check(dryFallback[WeatherPreset.RAINY] == 0 && dryFallback[WeatherPreset.SUNNY] == 10,
+    "Never rain has a dry fallback when native weights contain only rain");
+Check(!StormSettings.Valid(new() { Frequency = (RainFrequency)99 }),
+    "Unknown rain-frequency enum values are rejected by the server contract");
+Check(WeatherPreferences.RainOnly(new() { Frequency = RainFrequency.AlwaysRain })
+    && !WeatherPreferences.RainOnly(new() { Frequency = RainFrequency.Never, RainBoost = 100 })
+    && !WeatherPreferences.RainOnly(new() { Enabled = false, Frequency = RainFrequency.AlwaysRain }),
+    "Rain-only budget refresh honors the selected mode and master switch");
+Check(WeatherPreferences.ThunderstormChance(true, 30, 15) == 30
+    && WeatherPreferences.ThunderstormChance(false, 30, 15) == 15,
+    "Summer and other seasons select their independent thunderstorm chances");
+Check(WeatherPreferences.FrequencyFor(WeatherPresetChoice.OccasionalStorms) == RainFrequency.LessRain
+    && WeatherPreferences.SummerChanceFor(WeatherPresetChoice.OccasionalStorms) == 30
+    && WeatherPreferences.OtherChanceFor(WeatherPresetChoice.OccasionalStorms) == 15,
+    "Occasional storms uses reduced rain and thirty/fifteen percent thunder chances");
+Check(WeatherPreferences.FrequencyFor(WeatherPresetChoice.VanillaRainWithThunderstorms) == RainFrequency.TarkovDefault
+    && WeatherPreferences.FrequencyFor(WeatherPresetChoice.FrequentStorms) == RainFrequency.MoreRain
+    && WeatherPreferences.SummerChanceFor(WeatherPresetChoice.FrequentStorms) == 75
+    && WeatherPreferences.OtherChanceFor(WeatherPresetChoice.FrequentStorms) == 50,
+    "Vanilla and frequent weather presets have distinct forecast policies");
+Check(Math.Abs(WeatherPreferences.RainProbability(.2, RainFrequency.MoreRain, 25) - .4) < 1e-9,
+    "Migration can preserve an older custom twenty-five percent rain boost");
 Console.WriteLine("Return Of Thunderstorms checks passed: " + checks);

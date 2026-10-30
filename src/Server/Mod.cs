@@ -20,7 +20,7 @@ namespace ReturnOfThunderstorms
         public string Name { get; init; } = "Return Of Thunderstorms";
         public string Author { get; init; } = "killdg";
         public List<string>? Contributors { get; init; }
-        public SemanticVersioning.Version Version { get; init; } = new("1.2.3");
+        public SemanticVersioning.Version Version { get; init; } = new("1.2.4");
         public SemanticVersioning.Range SptVersion { get; init; } = new("~4.1.6");
         public List<string>? Incompatibilities { get; init; }
         public Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
@@ -32,6 +32,7 @@ namespace ReturnOfThunderstorms
     public sealed class SettingsRequest : IRequestData
     {
         public bool Enabled { get; set; } = true;
+        public RainFrequency? Frequency { get; set; }
         public float RainBoost { get; set; }
     }
 
@@ -60,20 +61,24 @@ namespace ReturnOfThunderstorms
             var value = new StormSettings
             {
                 Enabled = request.Enabled,
-                RainBoost = request.RainBoost
+                RainBoost = request.RainBoost,
+                Frequency = request.Frequency
             };
             if (!StormSettings.Valid(value))
             {
                 return new
                 {
                     ok = false,
-                    error = "Rain boost must be between 0 and 100."
+                    error = "Rain frequency must be a supported option and rain boost must be between 0 and 100."
                 };
             }
 
             lock (Gate)
             {
-                bool changed = value.Enabled != Options.Enabled || value.RainBoost != Options.RainBoost || !synchronized && value.Enabled && value.RainBoost > 0;
+                bool changed = value.Enabled != Options.Enabled
+                    || value.RainBoost != Options.RainBoost
+                    || value.Frequency != Options.Frequency
+                    || !synchronized;
                 Options = value;
                 synchronized = true;
                 if (changed)
@@ -93,7 +98,10 @@ namespace ReturnOfThunderstorms
                 {
                     ok = true,
                     enabled = value.Enabled,
-                    rainBoost = value.RainBoost
+                    rainBoost = value.RainBoost,
+                    frequency = value.Frequency,
+                    settingsSchema = 2,
+                    summer = seasons.GetActiveWeatherSeason() == Season.SUMMER
                 };
             }
         }
@@ -117,7 +125,7 @@ namespace ReturnOfThunderstorms
     {
         public static Dictionary<WeatherPreset, double> Apply(Dictionary<WeatherPreset, double> original, StormSettings options, bool winter)
         {
-            if (!options.Enabled || options.RainBoost <= 0 || winter)
+            if (!options.Enabled || options.Frequency == null && options.RainBoost <= 0 || options.Frequency == RainFrequency.TarkovDefault || winter)
             {
                 return original;
             }
@@ -130,10 +138,21 @@ namespace ReturnOfThunderstorms
             }
 
             double baseline = rainy / total;
-            double target = StormPolicy.RainProbability(baseline, options.RainBoost);
+            double target = options.Frequency.HasValue
+                ? WeatherPreferences.RainProbability(baseline, options.Frequency.Value, options.RainBoost > 0 ? options.RainBoost : 50)
+                : StormPolicy.RainProbability(baseline, options.RainBoost);
             foreach (var key in original.Keys)
             {
-                result[key] = key == WeatherPreset.RAINY ? target * total : baseline >= 1 ? 0 : original[key] * (1 - target) / (1 - baseline);
+                result[key] = key == WeatherPreset.RAINY
+                    ? target * total
+                    : baseline >= 1 ? 0 : original[key] * (1 - target) / (1 - baseline);
+            }
+
+            // A native all-rain dictionary has no dry ratios to redistribute.
+            // Use a sunny fallback when the user asks for less/no rain in that case.
+            if (baseline >= 1 && target < 1)
+            {
+                result[WeatherPreset.SUNNY] = (1 - target) * total;
             }
 
             return result;
@@ -183,7 +202,7 @@ namespace ReturnOfThunderstorms
             // rain-only budget before it reaches zero and falls back to a sunny preset.
             lock (StormControl.Gate)
             {
-                if (StormControl.Options.Enabled && StormControl.Options.RainBoost == 100 && currentSeason != Season.WINTER)
+                if (WeatherPreferences.RainOnly(StormControl.Options) && currentSeason != Season.WINTER)
                 {
                     presetWeights = new(__instance.GetWeatherPresetWeightsBySeason(currentSeason));
                 }
@@ -198,7 +217,7 @@ namespace ReturnOfThunderstorms
         {
             control.Initialize(Path.GetDirectoryName(typeof(Mod).Assembly.Location)!);
             new Harmony("com.killdg.returnofthunderstorms").PatchAll(typeof(Mod).Assembly);
-            logger.Success("[Return Of Thunderstorms] 1.2.3 loaded; independent weather mod by killdg.");
+            logger.Success("[Return Of Thunderstorms] 1.2.4 loaded; independent weather mod by killdg.");
             return Task.CompletedTask;
         }
     }

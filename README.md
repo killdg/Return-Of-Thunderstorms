@@ -4,17 +4,17 @@
 
 Bring thunderstorms back into normal SPT weather, with heavy rain recordings, lightning, thunder, optional hurricane effects, and night-time electrical flickering.
 
-This is a standalone weather mod.
+This is a standalone weather mod. **Press F1 in-game to open Return Of Thunderstorms settings**, then choose a weather preset. Leave Enabled on to use it.
 
-**Current release:** client **1.2.3**, server **1.2.3**
+**Current release:** client **1.2.4**, server **1.2.4**
 **Target:** SPT **4.1.6**, EFT **0.16.9.40743**
-**Download:** [Download 1.2.3 and release notes](https://github.com/killdg/Return-Of-Thunderstorms/releases/tag/v1.2.3)
+**Download:** [Download 1.2.4 and release notes](https://github.com/killdg/Return-Of-Thunderstorms/releases/tag/v1.2.4)
 
 ## What the mod changes
 
 | Feature | What changes in a raid |
 | --- | --- |
-| Thunderstorm chance | A normal rain period can become a thunderstorm. Leave rain boost at zero to preserve Tarkov's ordinary rain frequency. |
+| Thunderstorm chance | Separate summer/other-season chances convert normal rain periods into thunderstorms. Choose Tarkov default to preserve native rain frequency. |
 | Heavy rain | Native rain blends into the supplied heavy-rain recording through a gentle 45-second buildup. |
 | Lightning and thunder | Brief flashes pair with one of three thunder recordings after a short delay. The same recording does not play twice in succession. |
 | Indoor/outdoor sound | Rain is quieter and filtered under shelter. A three-second doorway fade avoids an abrupt audio switch. Four sliders customize rain and gameplay levels. |
@@ -23,7 +23,7 @@ This is a standalone weather mod.
 | Extra rain on eyes/goggles | Shorter native drop intervals make water build up faster outdoors during hurricane weather, while retaining native eyewear handling and shelter behavior. |
 | Night electrical flicker | Lightning briefly dims and flickers controllable lamps, street/building lights and supported emissive fixtures, then restores their brightness. |
 
-Flying debris and electrical flicker use the **20:00Ã¢â‚¬â€œ06:00** night window. Rain, thunder, wind and enhanced eye/goggle drops can still run during daytime storms. Daytime debris is disabled because its appearance was less convincing in testing.
+Flying debris and electrical flicker use the **20:00–06:00** night window. Rain, thunder, wind and enhanced eye/goggle drops can still run during daytime storms. Daytime debris is disabled because its appearance was less convincing in testing.
 
 ## Installation
 
@@ -32,60 +32,53 @@ Flying debris and electrical flicker use the **20:00Ã¢â‚¬â€œ06:00** ni
 3. Copy **both** `BepInEx` and `SPT_Runtime` directly from the extracted ZIP into your SPT root, beside `EscapeFromTarkov.exe`. Merge the folders. There is no `INSTALL` wrapper folder.
 4. Keep all four WAV files in the included `Audio` folder.
 5. Start SPT.Server, then launch Tarkov normally.
-6. Open **F1 Ã¢â€ â€™ Return Of Thunderstorms**. If you rebound Configuration Manager, use that key instead.
+6. Open **F1 → Return Of Thunderstorms**. If you rebound Configuration Manager, use that key instead.
 
 The ZIP root contains exactly `README.md`, `BepInEx/`, and `SPT_Runtime/`. The package contains this mod's client DLL, server DLL, example server configuration and four audio files. It contains no game binaries, profiles, saved personal settings, or RR/task-pack files. Profiles and inventories are not edited. SPT's included Configuration Manager supplies the F1 menu; no separate audio or effects mod is needed.
 
-## Normal weather with a chance of thunderstorms
+## Quick start: press F1
 
-For a light addition to normal Tarkov weather:
+After installation, **press F1** and expand **Return Of Thunderstorms**. SPT's included Configuration Manager opens the settings. If you changed its shortcut, use that key instead. Keep **Enabled** on, select a preset, then start an outdoor raid. Settings save automatically between sessions.
 
-- **Enabled:** on.
-- **Thunderstorm chance:** 25Ã¢â‚¬â€œ50%, or your preferred value.
-- **Rain chance boost:** **0%**.
-- **Hurricane effects:** off if you only want rain, lightning and thunder.
-- **Night lightning flicker** and **Rain muffles other game sounds:** optional.
+| Weather preset | Rain frequency | Summer thunder chance | Other seasons | Hurricane |
+| --- | --- | --- | --- | --- |
+| Occasional storms (new-install default) | Less rain | 30% | 15% | Off |
+| Vanilla rain + thunderstorms | Tarkov default | 30% | 15% | Off |
+| Frequent storms | More rain | 75% | 50% | On |
+| Custom | Your choices | Your choice | Your choice | Your choice |
 
-The thunderstorm chance is rolled **once per rain period, not once per raid**. A 25% setting means roughly one in four eligible rain periods becomes a storm. It does not make one in four raids rainy. Rain boost controls rainy-weather frequency separately.
+Selecting a preset also resets sound levels to outdoor rain 70%, indoor rain 40%, outdoor gameplay 25% and indoor gameplay 60%, with storm muffling and night light flicker on. Editing an individual weather, effect or sound setting switches the preset to Custom. The master Enabled switch and opening foldouts do not change your preset.
 
 ## F1 settings
 
 ### Weather
 
-| Setting | Default | What it does |
+- **Enabled:** stops this mod's effects immediately when off and restores native forecast generation through the server settings sync.
+- **Weather preset:** one-click setup using the table above.
+- **Rain frequency:** Never removes rain; Less rain halves native rainy-preset odds; Tarkov default preserves native odds; More rain normally moves the odds halfway toward 100%; Always rain selects rainy presets. Native winter snow is preserved.
+- **Summer thunderstorm chance:** default 30%, applied when summer rain begins.
+- **Other seasons thunderstorm chance:** default 15%, applied to rain outside summer. Winter precipitation stays native.
+
+**Rain frequency changes future forecasts. Thunderstorm chances apply only when it rains.** A rain period is rolled once, not once per raid; changing a chance slider does not reroll a storm already selected. Tarkov weather can persist across several raids, so forecast percentages are not percentages of raids. Settings changed mid-raid do not replace the weather curve already loaded by that raid.
+
+### Storm effects and sound
+
+| Setting | New-install default | Purpose |
 | --- | --- | --- |
-| Enabled | On | Master switch. Off stops this mod's effects and restores normal sound levels. The DLL remains loaded. |
-| Thunderstorm chance (%) | 50 | Chance that each eligible normal rain period becomes a thunderstorm. 0 disables conversion; 100 converts every eligible rain period. |
-| Rain chance boost (%) | 0 | Raises native rainy-preset odds toward 100%. Zero preserves ordinary weather odds. Changes apply to future raids and need the server component. Winter snow stays native. |
-| Rain muffles other game sounds | On | Applies your indoor/outdoor gameplay-volume sliders during storms. Off restores native gameplay volume. |
+| Muffle other sounds during storms | On | Reduces gameplay sound only during this mod's thunderstorms. |
+| Hurricane effects | Off | Adds gusting wind and night-only flying debris; ordinary rain, thunder and lightning work without it. |
+| Lights flicker during night lightning | On | Briefly changes accessible live lights at night and restores their brightness. |
+| Outdoor rain volume (%) | 70 | Maximum recording volume outdoors; transitions smoothly at doorways. |
 
-### Hurricane
+Expand **Advanced settings** for indoor rain volume (40%), outdoor gameplay volume (25%), indoor gameplay volume (60%), extra eye/goggle droplets and the debris limit (48). Rain sliders affect the recording, not thunder or generated wind. Gameplay sliders apply when muffling is on. These are independent gain controls, not calibrated decibel measurements.
 
-| Setting | Default | What it does |
-| --- | --- | --- |
-| Hurricane effects | On | Enables gusts, wind audio, night-only litter and the hurricane layer. Off retains the basic thunderstorm. |
-| Flying debris limit | 48 | Maximum pooled pieces; range 12Ã¢â‚¬â€œ96, including at most six larger cardboard pieces. Lower this for slower systems. |
-| Extra rain on eyes and goggles | On | In hurricane weather, native drop intervals shorten to about 2x normal at full storm strength and up to 2.75x during peak gusts. Only applies outdoors. |
+Expand **Testing** for connection status and the **Play test lightning** button. It requires an active outdoor thunderstorm. For a deliberate test, set Rain frequency to Always rain and both seasonal chances to 100% before loading the raid. Restore your preferred preset afterward.
 
-### Lightning lights
+### Upgrading from 1.2.3 or earlier
 
-| Setting | Default | What it does |
-| --- | --- | --- |
-| Night lightning flicker | On | Each night-time strike triggers short staggered electrical pulses, recovering in about 1.15 seconds. |
-| Play test lightning | Action | Toggle once during an active storm to request another strike. It resets automatically and waits for current thunder playback to finish. Lights flicker only at night. |
+Install **both matching 1.2.4 DLLs**. Previous sound values and effect switches are retained. The old single thunderstorm chance becomes both seasonal chances. A zero rain boost becomes Tarkov default, a partial boost becomes More rain (retaining its exact strength), and a 100% boost becomes Always rain. Migrated settings are labeled Custom rather than silently replacing your preferences.
 
-### Sound balance
-
-All four sliders range from **0Ã¢â‚¬â€œ100%** and save automatically. They are independent gain controls and do not need to add up to 100%.
-
-| Setting | Default |
-| --- | --- |
-| Outdoor rain volume (%) | 70 |
-| Indoor rain volume (%) | 40 |
-| Outdoor gameplay volume (%) | 25 |
-| Indoor gameplay volume (%) | 60 |
-
-Rain sliders control the recorded heavy-rain layer, not thunder or generated wind. Gameplay sliders apply only when muffling is enabled. Doorway transitions blend between your chosen indoor and outdoor values. Percentages are not calibrated real-world decibel measurements.
+If you previously tested with rain at 100%, **press F1 and select Occasional storms** to return to less frequent rain and the 30%/15% thunder chances. The old Rain chance boost control is no longer shown. Advanced and Testing are collapsed on a fresh install and remember your chosen open/closed state.
 
 ## Where it runs
 
@@ -113,7 +106,7 @@ Solo tests have confirmed audible rain and thunder, lightning flashes, indoor/ou
 
 ## Quick test and issue reports
 
-Before loading an outdoor raid, set both storm chance and rain boost to **100%**. Wait at least **90 seconds outdoors**. The first strike is scheduled after 30 seconds; later strikes use a 33% roll every three minutes. Use a night raid to check debris and lamp flicker. Restore rain boost to zero afterward if you want ordinary weather variety.
+Before loading an outdoor raid, press **F1**, set **Rain frequency** to **Always rain**, and set both seasonal thunderstorm chances to **100%**. Wait at least **90 seconds outdoors**. The first strike is scheduled after 30 seconds; later strikes use a 33% roll every three minutes. Use a night raid to check debris and lamp flicker. Select your preferred weather preset afterward to restore ordinary variety.
 
 When reporting an issue, include the map, raid time, settings, other installed mods, what happened, and a copy of `BepInEx/LogOutput.log` from that session. Preserve the log before launching again. Logs include audio playback state, clip-upload timing, long frame gaps, debris counts and light-cache coverage.
 
@@ -136,15 +129,15 @@ Build with .NET 10 and your own compatible SPT installation:
 ./Build.ps1 -SptRoot 'C:/Your-SPT-Installation' -Dotnet dotnet
 ```
 
-The script stages this mod's files under `artifacts/INSTALL` and builds a ZIP with the two install folders and README directly at its root. No Tarkov/SPT proprietary binaries are distributed in the repository.
+The script stages this mod's files under a fresh `artifacts/package-<version>-<build-id>` folder and builds a ZIP with the two install folders and README directly at its root. No Tarkov/SPT proprietary binaries are distributed in the repository.
 
-Current automated validation: **358 policy/audio checks**, **26 client compatibility checks**, and builds with zero warnings/errors. These checks complement playtests; they do not prove compatibility with every map, machine or mod combination.
+Current automated validation: **371 policy/audio checks**, **31 client compatibility checks**, and builds with zero warnings/errors. These checks complement playtests; they do not prove compatibility with every map, machine or mod combination.
 
 Code is distributed under the [MIT license](LICENSE). Project authorship: **killdg**, with assistance from **ChatGPT**.
 
-## 1.2.3 packaging correction
+## Installer layout
 
-This release changes the download layout for the SPT mod page: extract the ZIP and copy its two folders directly into SPT. There are no gameplay changes from 1.2.1. The older wrapper-based test archive remains in its original GitHub release.
+The download uses the SPT mod-page layout: extract the ZIP and copy its two folders directly into SPT. The older wrapper-based test archive remains in its original GitHub release.
 
 ## License notice
 
@@ -171,10 +164,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ## Source transparency and network behavior
 
-Version 1.2.3 reformats all C# source and tests with four-space indentation, Allman braces, separate statements, expanded declarations and readable multiline calls. Comments explain native field names, shader parameters, local audio paths, SPT routing and restoration. No obfuscator, binary packer or source minifier is used. The formatting follows the conventional C# layout shown by [SPT-BigBrain](https://github.com/DrakiaXYZ/SPT-BigBrain), without incorporating its code.
+The readability work introduced in 1.2.3 formats all C# source and tests with four-space indentation, Allman braces, separate statements, expanded declarations and readable multiline calls. Comments explain native field names, shader parameters, local audio paths, SPT routing and restoration. No obfuscator, binary packer or source minifier is used. The formatting follows the conventional C# layout shown by [SPT-BigBrain](https://github.com/DrakiaXYZ/SPT-BigBrain), without incorporating its code.
 
-The client sends only `Enabled` and `RainBoost` to `/client/returnofthunderstorms/settings` through SPT's existing request handler, using the SPT server address configured by the player. This allows the F1 weather controls to affect the server's forecast. There are no external service endpoints, analytics, telemetry or audio downloads. The server saves `config.json` beside this mod's DLL; normal BepInEx settings and logs stay in the SPT installation. The mod does not modify operating-system files.
+The client sends only `Enabled`, `Frequency` and `RainBoost` to `/client/returnofthunderstorms/settings` through SPT's existing request handler, using the SPT server address configured by the player. This allows the F1 weather controls to affect the server's forecast. There are no external service endpoints, analytics, telemetry or audio downloads. The server saves `config.json` beside this mod's DLL; normal BepInEx settings and logs stay in the SPT installation. The mod does not modify operating-system files.
 
-The v1.2.3 tag contains the source used for the release DLLs. Release assets include build information and SHA-256 checksums so reviewers can identify the source commit and verify the submitted files. Build.ps1 builds the server and client against a local SPT installation and produces the three-entry installer ZIP. See CONTRIBUTING.md for the formatting conventions.
+The v1.2.4 tag contains the source used for the release DLLs. Release assets include build information and SHA-256 checksums so reviewers can identify the source commit and verify the submitted files. Build.ps1 builds the server and client against a local SPT installation and produces the three-entry installer ZIP. See CONTRIBUTING.md for the formatting conventions.
 
-New configurations default to **70% outdoor rain volume**. Existing saved slider values are preserved; use the slider or its reset button to select the new default. Other sound settings and weather probabilities are unchanged. Readability improvements do not establish moderator approval; the SPT mod-page review is separate.
+New configurations default to **Occasional storms** and **70% outdoor rain volume**. Existing saved values are migrated to Custom; choosing a preset intentionally applies that preset's documented values. Readability improvements do not establish moderator approval; the SPT mod-page review is separate.

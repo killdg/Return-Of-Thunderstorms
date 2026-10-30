@@ -16,8 +16,8 @@ using Object = UnityEngine.Object;
 namespace ReturnOfThunderstorms
 {
     [DefaultExecutionOrder(10000)]
-    [BepInPlugin("com.killdg.returnofthunderstorms", "Return Of Thunderstorms", "1.2.3")]
-    public sealed class Plugin : BaseUnityPlugin
+    [BepInPlugin("com.killdg.returnofthunderstorms", "Return Of Thunderstorms", "1.2.4")]
+    public sealed partial class Plugin : BaseUnityPlugin
     {
         private static Plugin? instance;
         internal static bool StormActive;
@@ -31,7 +31,6 @@ namespace ReturnOfThunderstorms
         private readonly LightningLightFlicker lighting = new();
         private ConfigEntry<int> debrisLimit = null!;
         private readonly HurricaneDirector hurricane = new();
-        private ConfigEntry<float> chance = null!;
         private ConfigEntry<float> boost = null!;
         private ConfigEntry<float> outdoorRain = null!;
         private ConfigEntry<float> indoorRain = null!;
@@ -61,140 +60,7 @@ namespace ReturnOfThunderstorms
         {
             instance = this;
             AudioSettings.OnAudioConfigurationChanged += assets.AudioConfigurationChanged;
-            enabledSetting = Config.Bind(
-                "1. Settings",
-                "Enabled",
-                true,
-                "Enable Return Of Thunderstorms. Turning this off immediately restores normal rain audio and stops its thunder effects."
-            );
-            chance = Config.Bind(
-                "1. Settings",
-                "Thunderstorm chance (%)",
-                50f,
-                new ConfigDescription(
-                    "Chance that a new normal rain period becomes a thunderstorm. Rolled once per rain period; " +
-                    "0 never replaces rain, 100 replaces every eligible rain period.",
-                    new AcceptableValueRange<float>(0, 100)
-                )
-            );
-            boost = Config.Bind(
-                "1. Settings",
-                "Rain chance boost (%)",
-                0f,
-                new ConfigDescription(
-                    "Increase the native rainy-weather preset odds toward 100%. Zero preserves standard odds; " +
-                    "100 selects rainy presets exclusively. Applies to future raids; winter snow is preserved. " +
-                    "Requires this mod's server DLL.",
-                    new AcceptableValueRange<float>(0, 100)
-                )
-            );
-            muffle = Config.Bind(
-                "1. Settings",
-                "Rain muffles other game sounds",
-                true,
-                "During this mod's thunderstorms, gradually reduce other sounds to 25% outdoors; shelter " +
-                "defaults to 60% gameplay and 40% recorded rain. Customize both indoor/outdoor levels in " +
-                "Sound balance. Restores their normal levels when the storm ends or the mod is disabled."
-            );
-            hurricaneEnabled = Config.Bind(
-                "2. Hurricane",
-                "Hurricane effects",
-                true,
-                "Add gusting wind, cosmetic newspapers, leaves, cardboard and wind audio during this mod's " +
-                "storms. No damage, loot or clock changes."
-            );
-            debrisLimit = Config.Bind(
-                "2. Hurricane",
-                "Flying debris limit",
-                48,
-                new ConfigDescription(
-                    "Maximum pooled pieces near the player. Larger cardboard pieces are limited to six; debris " +
-                    "stays outdoors even when viewed from inside. Lower for slower computers.",
-                    new AcceptableValueRange<int>(12, 96)
-                )
-            );
-            extraDrops = Config.Bind(
-                "2. Hurricane",
-                "Extra rain on eyes and goggles",
-                true,
-                "During hurricane weather, shorten native screen rain-drop intervals outdoors: up to 2.75 " +
-                "times normal during gusts. Native eyewear behavior and indoor clearing are retained."
-            );
-            lightFlicker = Config.Bind(
-                "3. Lightning lights",
-                "Night lightning flicker",
-                true,
-                "Experimental: every lightning strike briefly flickers cached controllable map lights at " +
-                "night (20:00ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“06:00). Restores their prior brightness. Excludes sun/moon, player equipment " +
-                "and baked lighting."
-            );
-            strikeTest = Config.Bind(
-                "3. Lightning lights",
-                "Play test lightning",
-                false,
-                "Action: enable once during an active storm to request another lightning/thunder strike. " +
-                "Automatically resets. Map lights flicker only at night; playback waits for any current " +
-                "thunder to finish."
-            );
-            strikeTest.Value = false;
-            strikeTest.SettingChanged += (_, _) =>
-            {
-                if (!strikeTest.Value)
-                {
-                    return;
-                }
-
-                strikeTest.Value = false;
-                if (StormActive)
-                {
-                    thunder.RequestTest();
-                }
-                else
-                {
-                    Trace("[ROT-LIGHTS] test requires an active outdoor storm");
-                }
-            };
-            outdoorRain = Config.Bind(
-                "4. Sound balance",
-                "Outdoor rain volume (%)",
-                70f,
-                new ConfigDescription(
-                    "Maximum recorded heavy-rain level outdoors. Builds toward this level with the storm; " +
-                    "transitions smoothly at doorways. Thunder and wind have separate fixed levels.",
-                    new AcceptableValueRange<float>(0, 100)
-                )
-            );
-            indoorRain = Config.Bind(
-                "4. Sound balance",
-                "Indoor rain volume (%)",
-                40f,
-                new ConfigDescription(
-                    "Maximum recorded heavy-rain level under shelter. Transitions smoothly from the outdoor setting.",
-                    new AcceptableValueRange<float>(0, 100)
-                )
-            );
-            outdoorSound = Config.Bind(
-                "4. Sound balance",
-                "Outdoor gameplay volume (%)",
-                25f,
-                new ConfigDescription(
-                    "Gameplay sound level at full outdoor storm strength, relative to your normal volume. Used " +
-                    "only when Rain muffles other game sounds is enabled.",
-                    new AcceptableValueRange<float>(0, 100)
-                )
-            );
-            indoorSound = Config.Bind(
-                "4. Sound balance",
-                "Indoor gameplay volume (%)",
-                60f,
-                new ConfigDescription(
-                    "Gameplay sound level at full storm strength under shelter. Used only when Rain muffles other game sounds is enabled.",
-                    new AcceptableValueRange<float>(0, 100)
-                )
-            );
-            enabledSetting.SettingChanged += (_, _) => retrySync = 0;
-            muffle.SettingChanged += (_, _) => Trace("[ROT-AUDIO] muffling setting=" + muffle.Value);
-            boost.SettingChanged += (_, _) => retrySync = Time.unscaledTime + 0.4f;
+            ConfigureMenu();
             rain = new(assets);
             thunder = new(
                 assets,
@@ -206,7 +72,7 @@ namespace ReturnOfThunderstorms
                     }
                 });
             harmony.PatchAll(typeof(Plugin).Assembly);
-            Logger.LogInfo("Return Of Thunderstorms 1.2.3 by killdg. Settings use SPT's standard F1 configuration panel.");
+            Logger.LogInfo("Return Of Thunderstorms 1.2.4 by killdg. Settings use SPT's standard F1 configuration panel.");
         }
 
         private void Update()
@@ -253,6 +119,11 @@ namespace ReturnOfThunderstorms
                 hurricane.Dispose();
                 Stop();
                 world = current;
+                // Refresh season information when entering/leaving a raid; the
+                // server does not rebuild a forecast when settings are unchanged.
+                sent = "";
+                seasonKnown = false;
+                retrySync = 0;
                 episode.Reset();
                 nextScan = 0;
                 nextDecision = 0;
@@ -272,7 +143,7 @@ namespace ReturnOfThunderstorms
                 && weather.RainController.State is not RainController.AbstractStateWinter
                 && StormPolicy.Outdoor(current.LocationId)
                 && !weather.WeatherDebug.Enabled;
-            if (!eligible)
+            if (!eligible || !seasonKnown)
             {
                 episode.Reset();
                 Stop();
@@ -283,7 +154,7 @@ namespace ReturnOfThunderstorms
             if (Time.unscaledTime >= nextDecision)
             {
                 nextDecision = Time.unscaledTime + 0.5f;
-                StormActive = episode.Tick(Time.unscaledTime, true, weather!.WeatherCurve.Rain >= 0.03f, chance.Value, UnityEngine.Random.value);
+                StormActive = episode.Tick(Time.unscaledTime, true, weather!.WeatherCurve.Rain >= 0.03f, WeatherPreferences.ThunderstormChance(serverSummer, summerChance.Value, otherChance.Value), UnityEngine.Random.value);
                 if (StormActive && !wasActive)
                 {
                     started = Time.unscaledTime;
@@ -388,12 +259,18 @@ namespace ReturnOfThunderstorms
             sources = Array.Empty<AudioSource>();
         }
 
-        // Synchronize only Enabled and RainBoost with the user's configured SPT
+        // Synchronize only enabled/rain-frequency settings with the user's configured SPT
         // server. The relative route below is registered by SettingsRouter.
         // No external host, account identifier, inventory or telemetry is sent.
         private void Sync()
         {
-            string request = JsonConvert.SerializeObject(new StormSettings { Enabled = enabledSetting.Value, RainBoost = boost.Value });
+            string request = JsonConvert.SerializeObject(new StormSettings
+            {
+                Enabled = enabledSetting.Value,
+                Frequency = frequency.Value,
+                RainBoost = frequency.Value == RainFrequency.AlwaysRain ? 100
+                    : frequency.Value == RainFrequency.MoreRain ? boost.Value : 0
+            });
             if (syncing || request == sent || Time.unscaledTime < retrySync)
             {
                 return;
@@ -429,11 +306,20 @@ namespace ReturnOfThunderstorms
                         throw new InvalidOperationException("Install the matching Return Of Thunderstorms server DLL for rain-frequency settings.");
                     }
 
+                    if (result["settingsSchema"]?.Value<int>() != 2)
+                    {
+                        throw new InvalidOperationException("Install the matching 1.2.4 server DLL to use rain frequency and seasonal chances.");
+                    }
+
+                    serverSummer = result["summer"]?.Value<bool>() == true;
+                    seasonKnown = true;
+                    syncStatus = "Weather settings connected. Active season: " + (serverSummer ? "summer" : "other / winter snow preserved");
                     sent = request;
                 }
                 catch (Exception e)
                 {
-                    Trace("[ROT] Weather settings sync: " + e.GetBaseException().Message);
+                    syncStatus = "Weather settings not connected: " + e.GetBaseException().Message;
+                    Trace("[ROT] " + syncStatus);
                 }
                 finally
                 {

@@ -5,9 +5,12 @@ namespace ReturnOfThunderstorms
     public sealed class StormSettings
     {
         public bool Enabled { get; set; } = true;
+        // Null supports existing server configs and older clients without guessing
+        // a new meaning for their saved RainBoost value. New clients always send Frequency.
+        public RainFrequency? Frequency { get; set; }
         public float RainBoost { get; set; }
 
-        public static bool Valid(StormSettings value) => !float.IsNaN(value.RainBoost) && !float.IsInfinity(value.RainBoost) && value.RainBoost >= 0 && value.RainBoost <= 100;
+        public static bool Valid(StormSettings value) => !float.IsNaN(value.RainBoost) && !float.IsInfinity(value.RainBoost) && value.RainBoost >= 0 && value.RainBoost <= 100 && WeatherPreferences.IsDefined(value.Frequency);
     }
 
     public static class StormPolicy

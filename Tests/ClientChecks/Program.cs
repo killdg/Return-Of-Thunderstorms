@@ -22,8 +22,8 @@ Check(
     "Standalone plugin appears under its own F1 title"
 );
 Check(
-    plugin.Fields.Count(f => f.FieldType is GenericInstanceType type && type.ElementType.Name == "ConfigEntry`1") == 13,
-    "Weather, hurricane, flicker and four sound-balance sliders are exposed"
+    plugin.Fields.Count(f => f.FieldType is GenericInstanceType type && type.ElementType.Name == "ConfigEntry`1") == 16,
+    "Menu stores weather presets, seasonal chances and sound settings"
 );
 Check(
     !plugin.CustomAttributes.Any(a => a.AttributeType.Name == "BepInDependency") && !client.MainModule.AssemblyReferences.Any(a => a.Name.StartsWith("RaidRoulette") || a.Name.StartsWith("Fika")),
@@ -143,7 +143,7 @@ Check(
 );
 // Inspect the compiled binding so the packaged default, not only documentation,
 // is covered by the release check. BepInEx still preserves an existing config.
-var awakeInstructions = plugin.Methods.Single(method => method.Name == "Awake").Body.Instructions.ToList();
+var awakeInstructions = plugin.Methods.Single(method => method.Name == "ConfigureMenu").Body.Instructions.ToList();
 int outdoorRainSetting = awakeInstructions.FindIndex(instruction =>
     instruction.OpCode == OpCodes.Ldstr && instruction.Operand?.ToString() == "Outdoor rain volume (%)");
 Check(
@@ -154,7 +154,22 @@ Check(
 );
 Check(
     plugin.CustomAttributes.Single(attribute => attribute.AttributeType.Name == "BepInPlugin")
-        .ConstructorArguments[2].Value.ToString() == "1.2.3",
-    "Packaged client identifies the 1.2.3 source release"
+        .ConstructorArguments[2].Value.ToString() == "1.2.4",
+    "Packaged client identifies the 1.2.4 source release"
 );
+var menuAttributes = client.MainModule.Types.Single(type => type.Name == "ConfigurationManagerAttributes");
+Check(menuAttributes.Fields.Any(field => field.Name == "CustomDrawer")
+    && menuAttributes.Fields.Any(field => field.Name == "Browsable"),
+    "Advanced and Testing drawers expose Configuration Manager's expected attribute fields");
+Check(plugin.Methods.Any(method => method.Name == "DrawAdvanced")
+    && plugin.Methods.Any(method => method.Name == "DrawTesting")
+    && plugin.Methods.Any(method => method.Name == "ApplyPreset"),
+    "The client includes foldout drawers and preset application");
+var syncCalls = plugin.Methods.Where(method => method.HasBody)
+    .SelectMany(method => method.Body.Instructions)
+    .Where(instruction => instruction.Operand is string).Select(instruction => instruction.Operand.ToString()).ToArray();
+Check(syncCalls.Contains("Summer thunderstorm chance (%)")
+    && syncCalls.Contains("Other seasons thunderstorm chance (%)")
+    && syncCalls.Any(text => text!.Contains("Press F1")),
+    "Seasonal controls and F1 instructions are present in the compiled menu");
 Console.WriteLine("Return Of Thunderstorms client checks passed: " + checks);
