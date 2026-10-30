@@ -15,7 +15,7 @@ using Object=UnityEngine.Object;
 namespace ReturnOfThunderstorms;
 
 [DefaultExecutionOrder(10000)]
-[BepInPlugin("com.killdg.returnofthunderstorms","Return Of Thunderstorms","1.2.1")]
+[BepInPlugin("com.killdg.returnofthunderstorms","Return Of Thunderstorms","1.2.2")]
 public sealed class Plugin:BaseUnityPlugin
 {
  private static Plugin? instance;
@@ -54,7 +54,7 @@ public sealed class Plugin:BaseUnityPlugin
   muffle.SettingChanged+=(_,_)=>Trace("[ROT-AUDIO] muffling setting="+muffle.Value);
   boost.SettingChanged+=(_,_)=>retrySync=Time.unscaledTime+0.4f;
   rain=new(assets);thunder=new(assets,()=>{if(lightFlicker.Value)lighting.Strike();});harmony.PatchAll(typeof(Plugin).Assembly);
-  Logger.LogInfo("Return Of Thunderstorms 1.2.1 by killdg. Settings use SPT's standard F1 configuration panel.");
+  Logger.LogInfo("Return Of Thunderstorms 1.2.2 by killdg. Settings use SPT's standard F1 configuration panel.");
  }
  private void Update()
  {

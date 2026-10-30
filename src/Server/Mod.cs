@@ -17,7 +17,7 @@ public record ModMetadata:IModMetadata
 {
  public string ModGuid{get;init;}="com.killdg.returnofthunderstorms";
  public string Name{get;init;}="Return Of Thunderstorms";public string Author{get;init;}="killdg";public List<string>? Contributors{get;init;}
- public SemanticVersioning.Version Version{get;init;}=new("1.2.0-preview.2");public SemanticVersioning.Range SptVersion{get;init;}=new("~4.1.6");
+ public SemanticVersioning.Version Version{get;init;}=new("1.2.2");public SemanticVersioning.Range SptVersion{get;init;}=new("~4.1.6");
  public List<string>? Incompatibilities{get;init;}public Dictionary<string,SemanticVersioning.Range>? ModDependencies{get;init;}
  public string? Url{get;init;}public bool HasPrepatcher{get;init;}public string License{get;init;}="MIT";
 }
@@ -94,6 +94,6 @@ public sealed class Mod(ISptLogger<Mod> logger,StormControl control):IOnLoad
  public Task OnLoadAsync(CancellationToken cancellationToken)
  {
   control.Initialize(Path.GetDirectoryName(typeof(Mod).Assembly.Location)!);new Harmony("com.killdg.returnofthunderstorms").PatchAll(typeof(Mod).Assembly);
-  logger.Success("[Return Of Thunderstorms] 1.2.0-preview.2 loaded; independent weather mod by killdg.");return Task.CompletedTask;
+  logger.Success("[Return Of Thunderstorms] 1.2.2 loaded; independent weather mod by killdg.");return Task.CompletedTask;
  }
 }

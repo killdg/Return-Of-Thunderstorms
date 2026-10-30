@@ -6,9 +6,9 @@ Bring thunderstorms back into normal SPT weather, with heavy rain recordings, li
 
 This is a standalone weather mod. 
 
-**Current test build:** client **1.2.1**, server **1.2.0-preview.2**  
+**Current release:** client **1.2.2**, server **1.2.2**  
 **Target:** SPT **4.1.6**, EFT **0.16.9.40743**  
-**Download:** [Friend-test package and release notes](https://github.com/killdg/Return-Of-Thunderstorms/releases/tag/v1.2.1-test)
+**Download:** [Download 1.2.2 and release notes](https://github.com/killdg/Return-Of-Thunderstorms/releases/tag/v1.2.2)
 
 ## What the mod changes
 
@@ -28,13 +28,13 @@ Flying debris and electrical flicker use the **20:00–06:00** night window. Rai
 ## Installation
 
 1. Close Tarkov, the SPT launcher and SPT.Server.
-2. Download and extract the test ZIP from [Releases](https://github.com/killdg/Return-Of-Thunderstorms/releases).
-3. Open its `INSTALL` folder. Copy **both** `BepInEx` and `SPT_Runtime` into your SPT root, beside `EscapeFromTarkov.exe`. Merge the folders.
+2. Download and extract the release ZIP from [Releases](https://github.com/killdg/Return-Of-Thunderstorms/releases).
+3. Copy **both** `BepInEx` and `SPT_Runtime` directly from the extracted ZIP into your SPT root, beside `EscapeFromTarkov.exe`. Merge the folders. There is no `INSTALL` wrapper folder.
 4. Keep all four WAV files in the included `Audio` folder.
 5. Start SPT.Server, then launch Tarkov normally.
 6. Open **F1 → Return Of Thunderstorms**. If you rebound Configuration Manager, use that key instead.
 
-The package contains this mod's client DLL, server DLL, example server configuration and four audio files. It contains no game binaries, profiles, saved personal settings, or RR/task-pack files. Profiles and inventories are not edited. SPT's included Configuration Manager supplies the F1 menu; no separate audio or effects mod is needed.
+The ZIP root contains exactly `README.md`, `BepInEx/`, and `SPT_Runtime/`. The package contains this mod's client DLL, server DLL, example server configuration and four audio files. It contains no game binaries, profiles, saved personal settings, or RR/task-pack files. Profiles and inventories are not edited. SPT's included Configuration Manager supplies the F1 menu; no separate audio or effects mod is needed.
 
 ## Normal weather with a chance of thunderstorms
 
@@ -136,8 +136,36 @@ Build with .NET 10 and your own compatible SPT installation:
 ./Build.ps1 -SptRoot 'C:/Your-SPT-Installation' -Dotnet dotnet
 ```
 
-The script stages this mod's files under `artifacts/INSTALL`. No Tarkov/SPT proprietary binaries are distributed in the repository.
+The script stages this mod's files under `artifacts/INSTALL` and builds a ZIP with the two install folders and README directly at its root. No Tarkov/SPT proprietary binaries are distributed in the repository.
 
 Current automated validation: **358 policy/audio checks**, **26 client compatibility checks**, and builds with zero warnings/errors. These checks complement playtests; they do not prove compatibility with every map, machine or mod combination.
 
 Code is distributed under the [MIT license](LICENSE). Project authorship: **killdg**, with assistance from **ChatGPT**.
+
+## 1.2.2 packaging correction
+
+This release changes the download layout for the SPT mod page: extract the ZIP and copy its two folders directly into SPT. There are no gameplay changes from 1.2.1. The older wrapper-based test archive remains in its original GitHub release.
+
+## License notice
+
+MIT License
+
+Copyright (c) 2026 killdg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
